@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PAGSUSULIT</title>
+    <!-- Google Font -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+      rel="stylesheet"/>
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="start-screen">
+    <h2>WIKANG PAMBANSA</h2>
+      <button id="start-button">Magsimula sa Pagsusulit</button>
+    </div>
+    <div id="display-container">
+      <div class="header">
+        <div class="number-of-count">
+          <span class="number-of-question">1 of 3 ng mga tanong</span>
+        </div>
+        <div class="timer-div">
+          <img src="timer-icon.svg" width="30px" height="30px" />
+          <span class="time-left">15s</span>
+        </div>
+      </div>
+      <div id="container">
+        <!-- questions and options will be displayed here -->
+      </div>
+      <button id="next-button">Susunod</button>
+    </div>
+    <div class="score-container hide">
+      <div id="user-score">Iskor</div>
+      <button id="restart">Magsimula Muli</button>
+    </div>
+    <!-- Script -->
+    <script src="script.js"></script>
+</body>
+</html>

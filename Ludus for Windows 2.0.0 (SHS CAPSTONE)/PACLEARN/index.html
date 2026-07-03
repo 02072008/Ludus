@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="Icon" href="LUDUS LOGO.png">   
+    <title>PACLEARN</title>
+    <link rel="stylesheet" href="Loading.css"> 
+</head>
+<body>
+    <div id="loading-screen">
+        <p>Saglit lang...</p>
+    </div>
+    
+    <div id="main-menu" style="display: none;">
+        <h1>PACLEARN</h1>
+        <button onclick="showTutorial()">Gabay tungo sa laro</button>
+        <a href="Mario.html"> <button>Simulan</button></a>
+        <button onclick="downloadGame()">Download</button>
+    </div>
+
+    <div id="tutorial-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeTutorial()">&times;</span>
+            <h2>Gabay sa larong PACLEARN</h2>
+            <p>Gamitin ang arrow button upang magalaw ang karakter</p>
+            <p>Kainin lahat ng pulang mansanas upang maipanalo ang laro.</p>
+            <p>Iwasan maubusan ng oras sa laro.</p>
+            <p>Sagutan ang lahat ng mga katanungan upang hindi matalo sa larong ito</p>
+        </div>
+    </div>
+    
+
+    <script src="loading.js"></script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PACLEARN</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="Icon" href="a1fcb64a454fd2664e945007eae7df84e2bdfa13b075f50840952b4e63aec01c.png">
+    
+</head>
+<body>
+    
+    <div id="game">
+        <canvas id="gameCanvas"></canvas>
+        <div id="questionBox" class="hidden">
+            <p id="questionText"></p>
+            <button class="optionBtn" id="option1"></button>
+            <button class="optionBtn" id="option2"></button>
+            <button class="optionBtn" id="option3"></button>
+        </div>
+        <div id="arrowControls">
+            <button class="arrowBtn" id="arrowUp">⬆️</button>
+            <div style="display: flex; gap: 20px;">
+                <button class="arrowBtn" id="arrowLeft">⬅️</button>
+                <button class="arrowBtn" id="arrowDown">⬇️</button>
+                <button class="arrowBtn" id="arrowRight">➡️</button>
+            </div>
+        </div>
+        
+    </div>
+    <div class="but1">
+        <a href="index.html">
+            <button class="pacman-button" onclick="pacmanExit()">
+                <div class="pacman">
+                    <div class="pacman-mouth"></div>
+                </div>
+                Exit
+            </button>
+        </a>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

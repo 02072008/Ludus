@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BEKI VOCAB</title>
+    <style>
+        body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f5;
+}
+
+header {
+    background: #0064e1;
+    color: white;
+    padding: 1rem;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2.5rem;
+}
+
+.search-container {
+    margin-top: 1rem;
+}
+
+input[type="text"] {
+    width: 80%;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    outline: none;
+}
+
+main {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 1rem;
+}
+
+section {
+    margin-bottom: 2rem;
+}
+
+#wordOfTheDay h2 {
+    font-size: 1.75rem;
+    border-bottom: 2px solid #0064e1;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+#wordOfTheDay p {
+    background: white;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#dictionaryContent h2 {
+    font-size: 1.75rem;
+    border-bottom: 2px solid #0064e1;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+#dictionaryContent p {
+    background: white;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1rem;
+    transition: background 0.3s, transform 0.3s;
+}
+
+#dictionaryContent p:hover {
+    background: #e0e0e0;
+    transform: translateY(-2px);
+}
+
+button {
+    background-color: #0064e1;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+button:hover {
+    background-color: #004bbf;
+}
+
+#favorites h2 {
+    font-size: 1.75rem;
+    border-bottom: 2px solid #0064e1;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+#favoritesList {
+    list-style: none;
+    padding: 0;
+}
+
+#favoritesList li {
+    background: white;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 0.5rem;
+}
+
+@media (max-width: 768px) {
+    input[type="text"] {
+        width: 100%;
+    }
+}
+
+    </style>
+    
+</head>
+<body>
+    <header>
+        <h1>Beki Vocab</h1>
+        <p class="developer">Developed by Kreations</p>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search for a word..." oninput="searchWord()">
+        </div>
+    </header>
+    <main>
+        <section id="wordOfTheDay">
+            <!-- Word of the Day will be injected here -->
+        </section>
+        <section id="dictionaryContent">
+            <!-- Dictionary entries will be injected here -->
+        </section>
+        <section id="favorites">
+            <h2>Favorites</h2>
+            <ul id="favoritesList">
+                <!-- Favorite words will be injected here -->
+            </ul>
+        </section>
+    </main>
+    <script>
+        const dictionary = {
+    properNouns: {
+        "Ace Sanchez": "atop sa balay",
+        "Aglipay": "ugly Pinay (jowang pokpok na chaka ng mayaman na foreigner)",
+        "Ana, Anaconda": "ahas, traidor",
+        "Anita Linda, Aida": "A.I.D.S.",
+        "Ate Vangie": "gamot pampatulog (Ativan Gang)",
+        "Ate Vi": "atrebida",
+        "Backstreet Boys": "cute guys sa likuran mo",
+        "Bayombong, Nueva Viscaya": "masturbate",
+        "Bebang, Mayta": "maid",
+        "Blusang Itim": "mga bakla na gumanda nang maayusan sa parlor",
+        "Cathy Santillan, Kate Gomez, Cathy Mora, Cathy Dennis": "makati, malibog",
+        "Chabelita": "chubby",
+        "Chanda Romero": "tummy (ang laki ng Chanda Romero nung pulis) / an old woman",
+        "Chiquito": "maliit",
+        "Churchill": "sosyal",
+        "Crayola Khomeni": "iyak",
+        "Dakota Harrison P! laza": "malaki birdie",
+        "Debbie Gibson": "give",
+        "Duty Free": "maliit ang nota",
+        "Ella Mae (Saeson), Ella Fitzgerald, Ella Luansing": "state of feeling horny",
+        "Eva Kalaw": "evak",
+        "Felix Bakat": "bakat ang birdie (sa brief or pants)",
+        "Girlie Rodis": "babae",
+        "Givenchy": "give, pahingi",
+        "Halls": "tsupa",
+        "Indiana Jones": "hindi sumipot",
+        "Janjalani, Pocahontas": "bakla na palaging late o indyanera",
+        "Jennilyn (Mercado)": "cheap, chaka",
+        "Joana Paras": "asawa",
+        "Julanis Morisette, Reyna Elena": "umuulan",
+        "Julie Andrews": "mahuli",
+        "Kelvinator, Kelvina": "babaeng mataba, sinlaki ng refrigirator",
+        "Leticia Ramos Shahani": "shabu",
+        "Lilet": "bading na bagets",
+        "Lucita Soriano": "loss na, sorry pa",
+        "Lucrecia Kasilag": "baliw",
+        "Luz Clarita, Luz Clarita, Luz Valdez": "talo, loss ang beauty",
+        "Maharlika, Mahalia Jackson": "mahal",
+        "Miss Nigeria": "negra",
+        "Murriah Carey, Morayta": "mura",
+        "Nora Daza": "magluto",
+        "Oprah Winfrey, O.P.M.": "oh, promise me, pangako, utang",
+        "Phil Collins": "Philcoa",
+        "Purita Kalaw Ledesma, Purita Kashiwara, Pureta Malaviga": "poor, dukha",
+        "Rica Paralejo, Nina Ricci": "mayaman",
+        "Rita Gomez": "naiirita",
+        "Ruffa": "laklak",
+        "Siete Pecados": "tsismosa",
+        "Thunder Cats": "gurang",
+        "Tom Jones, Tommy Lee Jones": "gutom",
+        "Uranus": "puwet",
+        "Washington D.C.": "wala",
+        "X-Men": "mga dating lalaki",
+        "Yayo Aguila": "dyahe",
+        "Zsa Zsa Padilla": "o siya, sige!"
+    },
+    adjectives: {
+        "48 years": "sobrang tagal",
+        "antibiotic": "antipatika",
+        "balaj, valaj": "balahura",
+        "bella": "boba",
+        "bigalou": "big",
+        "biway, chopopo, guash": "gwapo",
+        "bongga, bonggakea": "super to the max",
+        "borta": "malaki katawan",
+        "boyband": "lalaking sintaba ng baboy",
+        "buya": "nakakahiya",
+        "chaka, chuckie, shonget, ma-kyonget, chapter, jupang-pang": "ugly",
+        "cheapangga, chipipay": "cheap, ka-cheapan",
+        "chipipay": "cheap",
+        "chopopo": "gwapo",
+        "conalei": "baklush",
+        "daki": "dako",
+        "dites": "dito",
+        "doonek": "doon",
+        "effem": "halatang bakla",
+        "emena gushung": "malanding semenarista",
+        "fayatollah kumenis": "payat",
+        "ganda lang": "for free",
+        "ganders": "maganda",
+        "intonses": "sira, wasak",
+        "jongoloids": "bobo",
+        "jowa, jowabelles, jowabella": "karelasyon, boyfriend o girlfriend",
+        "jutay, juts": "maliit",
+        "kabog, loss": "talo!",
+        "katagalugan": "matagal",
+        "katol": "mukhang katulong",
+        "kirara": "pangit / maitim",
+        "klapeypey-klapeypey": "pumalakpak",
+        "krang-krang": "hungry (same as Tom Jones)",
+        "krung-krung": "sira ulo, baliw",
+        "lulu, tungril, tetetet": "lesbian",
+        "mahogany, mashumers, ugmas": "mabaho",
+        "majubis": "mataba / gusgusin",
+        "matod": "magnanakaw",
+        "nakakalurky": "nakaka-shock, nakaka-takot" }
+};
+
+// Utility functions
+function createListItem(word, definition, type) {
+    const li = document.createElement('li');
+    li.textContent = `${word}: ${definition}`;
+    const favoriteButton = document.createElement('button');
+    favoriteButton.textContent = 'Add to Favorites';
+    favoriteButton.onclick = () => addToFavorites(word, definition, type);
+    li.appendChild(favoriteButton);
+    return li;
+}
+
+function displayWordOfTheDay() {
+    const words = Object.keys(dictionary.properNouns);
+    const randomWord = words[Math.floor(Math.random() * words.length)];
+    const definition = dictionary.properNouns[randomWord];
+    const wordOfTheDayElement = document.getElementById('wordOfTheDay');
+    wordOfTheDayElement.innerHTML = `<h2>Word of the Day</h2><p><strong>${randomWord}:</strong> ${definition}</p>`;
+}
+
+function searchWord() {
+    const searchInput = document.getElementById('searchInput').value.toLowerCase();
+    const dictionaryContent = document.getElementById('dictionaryContent');
+    dictionaryContent.innerHTML = '';
+    let found = false;
+
+    for (const [type, entries] of Object.entries(dictionary)) {
+        for (const [word, definition] of Object.entries(entries)) {
+            if (word.toLowerCase().includes(searchInput) || definition.toLowerCase().includes(searchInput)) {
+                dictionaryContent.appendChild(createListItem(word, definition, type));
+                found = true;
+            }
+        }
+    }
+
+    if (!found) {
+        dictionaryContent.innerHTML = '<p>No results found</p>';
+    }
+}
+
+function addToFavorites(word, definition, type) {
+    const favoritesList = document.getElementById('favoritesList');
+    const li = document.createElement('li');
+    li.textContent = `${word}: ${definition}`;
+    favoritesList.appendChild(li);
+
+    // Store favorite in localStorage
+    const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+    favorites.push({ word, definition, type });
+    localStorage.setItem('favorites', JSON.stringify(favorites));
+}
+
+function loadFavorites() {
+    const favoritesList = document.getElementById('favoritesList');
+    const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+    favorites.forEach(favorite => {
+        const li = document.createElement('li');
+        li.textContent = `${favorite.word}: ${favorite.definition}`;
+        favoritesList.appendChild(li);
+    });
+}
+
+// Initial setup
+document.addEventListener('DOMContentLoaded', () => {
+    displayWordOfTheDay();
+    loadFavorites();
+});    
+
+    </script>
+    
+</body>
+</html>

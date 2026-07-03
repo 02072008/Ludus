@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scream to Cross - Filipino Language Game</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Reset and Global Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    background-color: #f0f8ff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+/* Game Container */
+#game-container {
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+    height: 600px;
+    background-color: #87ceeb;
+    border-radius: 10px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+}
+
+/* Screen Styles */
+.screen {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    transition: opacity 0.5s ease;
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+.hidden {
+    display: none;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Start Screen */
+#start-screen {
+    text-align: center;
+}
+
+#start-screen h1 {
+    font-size: 3rem;
+    color: #ff6b6b;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+#start-screen p {
+    font-size: 1.2rem;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+.instructions {
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    padding: 15px;
+    width: 80%;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.instructions h2 {
+    color: #4a4a4a;
+    margin-bottom: 10px;
+}
+
+.instructions p {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 5px;
+    text-align: left;
+}
+
+.mic-permission {
+    margin-bottom: 20px;
+    background-color: #e6f7ff;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #91d5ff;
+}
+
+button {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 5px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin: 10px 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+button:hover {
+    background-color: #45a049;
+    transform: translateY(-2px);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+#highscore-display {
+    margin-top: 20px;
+    font-size: 1.2rem;
+    color: #4a4a4a;
+    font-weight: bold;
+}
+
+/* Calibration Screen */
+#calibration-screen {
+    text-align: center;
+}
+
+#calibration-screen h2 {
+    font-size: 2rem;
+    color: #4a4a4a;
+    margin-bottom: 20px;
+}
+
+#mic-level-container {
+    width: 80%;
+    height: 30px;
+    background-color: #e0e0e0;
+    border-radius: 15px;
+    overflow: hidden;
+    margin: 20px 0;
+}
+
+#mic-level-bar {
+    height: 100%;
+    width: 0;
+    background-color: #ff6b6b;
+    transition: width 0.1s ease;
+}
+
+.sensitivity-adjustment {
+    display: flex;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.sensitivity-adjustment label {
+    margin-right: 10px;
+    font-weight: bold;
+}
+
+#sensitivity-slider {
+    width: 200px;
+}
+
+#calibration-status {
+    font-style: italic;
+    color: #666;
+    margin: 10px 0;
+}
+
+/* Game Screen */
+#game-screen {
+    padding: 0;
+    background: linear-gradient(to bottom, #87ceeb, #e0f7fa);
+}
+
+#score-display {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 1.5rem;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    z-index: 10;
+}
+
+#game-area {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+#character {
+    position: absolute;
+    width: 40px;
+    height: 60px;
+    background-color: #ff6b6b;
+    border-radius: 50% 50% 0 0;
+    bottom: 180px;
+    left: 50px;
+    z-index: 2;
+    transition: transform 0.2s ease;
+}
+
+#character::before {
+    content: '';
+    position: absolute;
+    width: 30px;
+    height: 20px;
+    background-color: #333;
+    border-radius: 50%;
+    top: 10px;
+    left: 5px;
+}
+
+#character::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background-color: white;
+    border-radius: 50%;
+    top: 15px;
+    left: 10px;
+}
+
+#stick {
+    position: absolute;
+    width: 5px;
+    background-color: #8b4513;
+    height: 0;
+    bottom: 180px;
+    left: 90px;
+    transform-origin: bottom;
+    z-index: 1;
+}
+
+.platform {
+    position: absolute;
+    height: 150px;
+    background-color: #4caf50;
+    bottom: 30px;
+    border-radius: 5px 5px 0 0;
+}
+
+#current-platform {
+    width: 100px;
+    left: 0;
+}
+
+#next-platform {
+    width: 80px;
+    left: 250px;
+}
+
+/* Platforms will have a textured top */
+.platform::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 10px;
+    background-color: #388e3c;
+    top: 0;
+    border-radius: 5px 5px 0 0;
+}
+
+#mic-indicator {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background-color: rgba(255, 255, 255, 0.7);
+    padding: 10px;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#mic-indicator i {
+    color: #ff6b6b;
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+}
+
+#volume-meter {
+    width: 40px;
+    height: 5px;
+    background-color: #e0e0e0;
+    border-radius: 2.5px;
+    overflow: hidden;
+}
+
+#volume-meter::before {
+    content: '';
+    display: block;
+    height: 100%;
+    width: 0;
+    background-color: #ff6b6b;
+    transition: width 0.1s ease;
+}
+
+#debug-info {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    background-color: rgba(255, 255, 255, 0.7);
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 0.8rem;
+}
+
+/* Question Screen */
+#question-screen {
+    background-color: rgba(255, 255, 255, 0.95);
+}
+
+#question-screen h2 {
+    font-size: 2rem;
+    color: #4a4a4a;
+    margin-bottom: 20px;
+}
+
+#question-container {
+    width: 90%;
+    max-width: 600px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+#question-text {
+    font-size: 1.3rem;
+    color: #333;
+    margin-bottom: 20px;
+    line-height: 1.4;
+}
+
+#options-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.option {
+    background-color: #f5f5f5;
+    padding: 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+}
+
+.option:hover {
+    background-color: #e0e0e0;
+    transform: translateY(-2px);
+}
+
+.option.selected {
+    background-color: #90caf9;
+    color: white;
+    box-shadow: 0 2px 8px rgba(33, 150, 243, 0.3);
+}
+
+.option.correct {
+    background-color: #a5d6a7;
+    color: white;
+}
+
+.option.incorrect {
+    background-color: #ef9a9a;
+    color: white;
+}
+
+#timer-container {
+    width: 80%;
+    height: 10px;
+    background-color: #e0e0e0;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+#timer-bar {
+    height: 100%;
+    width: 100%;
+    background-color: #ff6b6b;
+    transition: width linear;
+}
+
+/* Game Over Screen */
+#game-over-screen {
+    text-align: center;
+}
+
+#game-over-screen h2 {
+    font-size: 3rem;
+    color: #ff6b6b;
+    margin-bottom: 20px;
+}
+
+#final-score {
+    font-size: 1.5rem;
+    color: #4a4a4a;
+    margin-bottom: 15px;
+}
+
+#game-over-reason {
+    font-size: 1.2rem;
+    color: #666;
+    margin-bottom: 30px;
+}
+
+#new-highscore {
+    background-color: #ffd700;
+    padding: 10px 20px;
+    border-radius: 8px;
+    color: #333;
+    margin-bottom: 20px;
+    animation: pulse 1s infinite alternate;
+}
+
+@keyframes pulse {
+    from {
+        transform: scale(1);
+    }
+    to {
+        transform: scale(1.05);
+    }
+}
+
+#restart-btn {
+    background-color: #ff6b6b;
+}
+
+#restart-btn:hover {
+    background-color: #ff5252;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    #game-container {
+        width: 100%;
+        height: 100vh;
+        max-width: none;
+        border-radius: 0;
+    }
+    
+    #start-screen h1 {
+        font-size: 2.5rem;
+    }
+    
+    .instructions {
+        width: 90%;
+    }
+    
+    #options-container {
+        grid-template-columns: 1fr;
+    }
+    
+    button {
+        padding: 10px 20px;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    #start-screen h1 {
+        font-size: 2rem;
+    }
+    
+    .instructions p {
+        font-size: 0.9rem;
+    }
+    
+    #question-text {
+        font-size: 1.1rem;
+    }
+}
+
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <!-- Start Screen -->
+        <div id="start-screen" class="screen">
+            <h1>Scream to Cross</h1>
+            <p>A Filipino Language Learning Game</p>
+            <div class="instructions">
+                <h2>Instructions:</h2>
+                <p>1. Scream or make loud noises to extend the stick</p>
+                <p>2. Help the student cross the platforms</p>
+                <p>3. Answer Filipino language questions every 5 points</p>
+                <p>4. Game over if you fall or answer incorrectly</p>
+            </div>
+            <div class="mic-permission">
+                <p>This game requires microphone access.</p>
+                <button id="mic-permission-btn">Allow Microphone Access</button>
+            </div>
+            <button id="start-btn" disabled>Start Game</button>
+            <div id="highscore-display">High Score: 0</div>
+        </div>
+
+        <!-- Calibration Screen -->
+        <div id="calibration-screen" class="screen hidden">
+            <h2>Microphone Calibration</h2>
+            <p>Let's adjust the sensitivity of your microphone:</p>
+            <div id="mic-level-container">
+                <div id="mic-level-bar"></div>
+            </div>
+            <p>Make a noise at the volume you want to use for the game</p>
+            <div class="sensitivity-adjustment">
+                <label for="sensitivity-slider">Sensitivity:</label>
+                <input type="range" id="sensitivity-slider" min="1" max="100" value="50">
+            </div>
+            <p id="calibration-status">Calibrating...</p>
+            <button id="continue-btn" disabled>Continue</button>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="game-screen" class="screen hidden">
+            <div id="score-display">Score: 0</div>
+            <div id="game-area">
+                <div id="character"></div>
+                <div id="stick"></div>
+                <div id="current-platform" class="platform"></div>
+                <div id="next-platform" class="platform"></div>
+            </div>
+            <div id="mic-indicator">
+                <i class="fas fa-microphone"></i>
+                <div id="volume-meter"></div>
+            </div>
+            <div id="debug-info" class="hidden">
+                <p>Volume: <span id="volume-level">0</span></p>
+                <p>Threshold: <span id="threshold-level">0</span></p>
+            </div>
+        </div>
+
+        <!-- Question Screen -->
+        <div id="question-screen" class="screen hidden">
+            <h2>Filipino Language Question</h2>
+            <div id="question-container">
+                <p id="question-text"></p>
+                <div id="options-container">
+                    <!-- Options will be dynamically added here -->
+                </div>
+            </div>
+            <div id="timer-container">
+                <div id="timer-bar"></div>
+            </div>
+        </div>
+
+        <!-- Game Over Screen -->
+        <div id="game-over-screen" class="screen hidden">
+            <h2>Game Over!</h2>
+            <p id="final-score">Your score: 0</p>
+            <p id="game-over-reason"></p>
+            <div id="new-highscore" class="hidden">
+                <h3>New High Score!</h3>
+            </div>
+            <button id="restart-btn">Play Again</button>
+        </div>
+    </div>
+
+    <!-- Audio assets -->
+    <audio id="jump-sound" src="https://assets.codepen.io/21542/howler-push.mp3" preload="auto"></audio>
+    <audio id="fall-sound" src="https://assets.codepen.io/21542/howler-sfx-loss.mp3" preload="auto"></audio>
+    <audio id="correct-sound" src="https://assets.codepen.io/21542/howler-ding.mp3" preload="auto"></audio>
+    <audio id="wrong-sound" src="https://assets.codepen.io/21542/howler-sfx-loss.mp3" preload="auto"></audio>
+    <audio id="background-music" src="https://assets.codepen.io/21542/howler-ambient-loop.mp3" loop preload="auto"></audio>
+
+    <!-- Scripts -->
+    <script>
+        // Audio Manager for handling microphone input and audio processing
+class AudioManager {
+    constructor() {
+        this.audioContext = null;
+        this.microphone = null;
+        this.analyser = null;
+        this.dataArray = null;
+        this.volume = 0;
+        this.threshold = 0.15; // Default threshold value
+        this.isCalibrating = false;
+        this.calibrationData = [];
+        this.isListening = false;
+        this.onVolumeChange = null;
+        this.sensitivity = 0.5; // Default sensitivity (0-1)
+    }
+
+    // Initialize the audio context and request microphone access
+    async requestMicrophoneAccess() {
+        try {
+            // Create audio context
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            this.audioContext = new AudioContext();
+
+            // Request microphone access
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            
+            // Create microphone source
+            this.microphone = this.audioContext.createMediaStreamSource(stream);
+            
+            // Create analyser node
+            this.analyser = this.audioContext.createAnalyser();
+            this.analyser.fftSize = 256;
+            
+            // Connect microphone to analyser
+            this.microphone.connect(this.analyser);
+            
+            // Create data array for analyzing audio
+            this.dataArray = new Uint8Array(this.analyser.frequencyBinCount);
+            
+            // Start monitoring volume
+            this.startListening();
+            
+            return true;
+        } catch (error) {
+            console.error('Error accessing microphone:', error);
+            return false;
+        }
+    }
+
+    // Start listening to microphone input
+    startListening() {
+        if (this.audioContext && this.analyser) {
+            this.isListening = true;
+            this.updateVolume();
+        }
+    }
+
+    // Stop listening to microphone input
+    stopListening() {
+        this.isListening = false;
+    }
+
+    // Update volume level from microphone input
+    updateVolume() {
+        if (!this.isListening) return;
+
+        this.analyser.getByteFrequencyData(this.dataArray);
+        
+        // Calculate average volume
+        let sum = 0;
+        for (let i = 0; i < this.dataArray.length; i++) {
+            sum += this.dataArray[i];
+        }
+        
+        // Normalize volume to 0-1 range
+        this.volume = sum / (this.dataArray.length * 255);
+        
+        // Apply sensitivity multiplier
+        this.volume = Math.min(1, this.volume * this.sensitivity * 2);
+        
+        // Call volume change callback if available
+        if (this.onVolumeChange) {
+            this.onVolumeChange(this.volume);
+        }
+        
+        // If calibrating, collect data
+        if (this.isCalibrating) {
+            this.calibrationData.push(this.volume);
+        }
+        
+        // Continue updating
+        requestAnimationFrame(() => this.updateVolume());
+    }
+
+    // Start calibration process
+    startCalibration() {
+        this.isCalibrating = true;
+        this.calibrationData = [];
+    }
+
+    // End calibration and set threshold
+    endCalibration() {
+        this.isCalibrating = false;
+        
+        if (this.calibrationData.length > 0) {
+            // Calculate average of calibration data
+            const sum = this.calibrationData.reduce((a, b) => a + b, 0);
+            const average = sum / this.calibrationData.length;
+            
+            // Set threshold to 70% of the average volume during calibration
+            this.threshold = average * 0.7;
+            
+            // Ensure threshold is within reasonable range
+            this.threshold = Math.max(0.05, Math.min(0.5, this.threshold));
+        }
+        
+        // Clear calibration data
+        this.calibrationData = [];
+        
+        return this.threshold;
+    }
+
+    // Set sensitivity (0-1)
+    setSensitivity(value) {
+        this.sensitivity = Math.max(0.1, Math.min(1.0, value));
+    }
+
+    // Check if volume exceeds threshold
+    isScreaming() {
+        return this.volume > this.threshold;
+    }
+
+    // Get current volume level (0-1)
+    getVolume() {
+        return this.volume;
+    }
+
+    // Get current threshold level (0-1)
+    getThreshold() {
+        return this.threshold;
+    }
+
+    // Play a sound from an audio element
+    playSound(audioElement) {
+        if (audioElement) {
+            audioElement.currentTime = 0;
+            audioElement.play().catch(e => console.log("Audio playback error:", e));
+        }
+    }
+}
+
+// Create global AudioManager instance
+const audioManager = new AudioManager();
+
+    </script>
+    <script>
+        // Game logic for Scream to Cross - Filipino Language Game
+document.addEventListener('DOMContentLoaded', () => {
+    // DOM Elements
+    const startScreen = document.getElementById('start-screen');
+    const calibrationScreen = document.getElementById('calibration-screen');
+    const gameScreen = document.getElementById('game-screen');
+    const questionScreen = document.getElementById('question-screen');
+    const gameOverScreen = document.getElementById('game-over-screen');
+
+    const micPermissionBtn = document.getElementById('mic-permission-btn');
+    const startBtn = document.getElementById('start-btn');
+    const continueBtn = document.getElementById('continue-btn');
+    const restartBtn = document.getElementById('restart-btn');
+
+    const character = document.getElementById('character');
+    const stick = document.getElementById('stick');
+    const currentPlatform = document.getElementById('current-platform');
+    const nextPlatform = document.getElementById('next-platform');
+    
+    const scoreDisplay = document.getElementById('score-display');
+    const finalScore = document.getElementById('final-score');
+    const gameOverReason = document.getElementById('game-over-reason');
+    const highscoreDisplay = document.getElementById('highscore-display');
+    const newHighscoreDisplay = document.getElementById('new-highscore');
+
+    const micLevelBar = document.getElementById('mic-level-bar');
+    const volumeMeter = document.getElementById('volume-meter');
+    const sensitivitySlider = document.getElementById('sensitivity-slider');
+    const calibrationStatus = document.getElementById('calibration-status');
+    
+    const volumeLevel = document.getElementById('volume-level');
+    const thresholdLevel = document.getElementById('threshold-level');
+    
+    const questionText = document.getElementById('question-text');
+    const optionsContainer = document.getElementById('options-container');
+    const timerBar = document.getElementById('timer-bar');
+
+    // Audio elements
+    const jumpSound = document.getElementById('jump-sound');
+    const fallSound = document.getElementById('fall-sound');
+    const correctSound = document.getElementById('correct-sound');
+    const wrongSound = document.getElementById('wrong-sound');
+    const backgroundMusic = document.getElementById('background-music');
+
+    // Game state
+    let score = 0;
+    let highScore = localStorage.getItem('highScore') || 0;
+    let gameActive = false;
+    let stickExtending = false;
+    let stickRotating = false;
+    let stickLength = 0;
+    let platformGap = 200;
+    let platformWidth = 80;
+    let characterPosition = { x: 50, y: 180 };
+    let nextPlatformPosition = 250;
+    let characterMoving = false;
+    let currentQuestion = null;
+    let questionAnswered = false;
+    let questionTimer = null;
+    let questionTimerDuration = 10; // seconds
+    let gameOverStatus = '';
+
+    // Display high score
+    highscoreDisplay.textContent = `High Score: ${highScore}`;
+
+    // Microphone permission button event listener
+    micPermissionBtn.addEventListener('click', async () => {
+        const micAccessGranted = await audioManager.requestMicrophoneAccess();
+        
+        if (micAccessGranted) {
+            micPermissionBtn.textContent = 'Microphone Access Granted!';
+            micPermissionBtn.style.backgroundColor = '#4caf50';
+            startBtn.disabled = false;
+            
+            // Update microphone level display during setup
+            audioManager.onVolumeChange = (volume) => {
+                updateMicrophoneVisuals(volume);
+            };
+        } else {
+            micPermissionBtn.textContent = 'Microphone Access Denied. Please try again.';
+            micPermissionBtn.style.backgroundColor = '#f44336';
+        }
+    });
+
+    // Update microphone visual indicators
+    function updateMicrophoneVisuals(volume) {
+        // Update volume meter
+        if (volumeMeter.firstChild) {
+            volumeMeter.firstChild.style.width = `${volume * 100}%`;
+        } else {
+            volumeMeter.style.width = `${volume * 100}%`;
+        }
+        
+        // Update calibration bar if visible
+        if (!calibrationScreen.classList.contains('hidden')) {
+            micLevelBar.style.width = `${volume * 100}%`;
+        }
+        
+        // Update debug info if needed
+        if (volumeLevel) {
+            volumeLevel.textContent = volume.toFixed(2);
+        }
+        if (thresholdLevel) {
+            thresholdLevel.textContent = audioManager.getThreshold().toFixed(2);
+        }
+    }
+
+    // Start button event listener
+    startBtn.addEventListener('click', () => {
+        startScreen.classList.add('hidden');
+        calibrationScreen.classList.remove('hidden');
+        
+        // Start microphone calibration
+        audioManager.startCalibration();
+        
+        // Update status after 3 seconds
+        setTimeout(() => {
+            calibrationStatus.textContent = 'Mic level detected. Adjust sensitivity if needed.';
+            continueBtn.disabled = false;
+        }, 3000);
+    });
+
+    // Sensitivity slider event listener
+    sensitivitySlider.addEventListener('input', () => {
+        const sensitivityValue = sensitivitySlider.value / 100;
+        audioManager.setSensitivity(sensitivityValue);
+    });
+
+    // Continue button event listener
+    continueBtn.addEventListener('click', () => {
+        // End calibration and get threshold
+        const threshold = audioManager.endCalibration();
+        
+        // Start the game
+        calibrationScreen.classList.add('hidden');
+        gameScreen.classList.remove('hidden');
+        
+        // Play background music
+        backgroundMusic.volume = 0.3;
+        backgroundMusic.play().catch(e => console.log("Background music error:", e));
+        
+        // Start game
+        startGame();
+    });
+
+    // Start the game
+    function startGame() {
+        resetGameState();
+        gameActive = true;
+        
+        // Set up the first platform
+        setupPlatforms();
+        
+        // Start game loop
+        gameLoop();
+    }
+
+    // Reset game state
+    function resetGameState() {
+        score = 0;
+        scoreDisplay.textContent = `Score: ${score}`;
+        stickLength = 0;
+        stickExtending = false;
+        stickRotating = false;
+        characterMoving = false;
+        
+        // Reset stick appearance
+        stick.style.height = '0px';
+        stick.style.transform = 'rotate(0deg)';
+        
+        // Reset character position
+        characterPosition = { x: 50, y: 180 };
+        character.style.left = `${characterPosition.x}px`;
+        character.style.bottom = `${characterPosition.y}px`;
+        
+        // Reset platform positions
+        platformGap = 200; // Initial gap
+        platformWidth = 80; // Initial width
+    }
+
+    // Set up platforms
+    function setupPlatforms() {
+        // Position first platform
+        currentPlatform.style.width = '100px';
+        currentPlatform.style.left = '0px';
+        
+        // Randomize next platform width and position
+        platformWidth = Math.max(40, Math.min(80, 80 - Math.floor(score / 10) * 5));
+        platformGap = Math.min(400, 200 + Math.floor(score / 5) * 20);
+        
+        nextPlatformPosition = 100 + platformGap;
+        nextPlatform.style.width = `${platformWidth}px`;
+        nextPlatform.style.left = `${nextPlatformPosition}px`;
+    }
+
+    // Main game loop
+    function gameLoop() {
+        if (!gameActive) return;
+        
+        // Check if player is screaming to extend stick
+        if (stickExtending && !stickRotating && !characterMoving) {
+            const isScreaming = audioManager.isScreaming();
+            
+            if (isScreaming && stickLength < 400) {
+                // Extend stick when screaming
+                stickLength += 5;
+                stick.style.height = `${stickLength}px`;
+            } else if (!isScreaming && stickLength > 0) {
+                // Stop extending and start rotating stick
+                stickExtending = false;
+                stickRotating = true;
+                rotateStick();
+            }
+        }
+        
+        // Continue the game loop
+        requestAnimationFrame(gameLoop);
+    }
+
+    // Handle stick rotation
+    function rotateStick() {
+        let rotation = 0;
+        const rotationInterval = setInterval(() => {
+            rotation += 2;
+            stick.style.transform = `rotate(${rotation}deg)`;
+            
+            // Stop rotation when stick becomes horizontal
+            if (rotation >= 90) {
+                clearInterval(rotationInterval);
+                stick.style.transform = 'rotate(90deg)';
+                checkStickLength();
+            }
+        }, 10);
+    }
+
+    // Check if stick length is appropriate for crossing
+    function checkStickLength() {
+        const platformStart = nextPlatformPosition;
+        const platformEnd = nextPlatformPosition + platformWidth;
+        
+        if (stickLength >= platformStart - 90 && stickLength <= platformEnd - 50) {
+            // Successful landing
+            moveCharacter(true);
+        } else {
+            // Will fail - stick is too short or too long
+            moveCharacter(false);
+        }
+    }
+
+    // Move character across the stick
+    function moveCharacter(willLand) {
+        characterMoving = true;
+        let position = 0;
+        const moveSpeed = 2;
+        
+        const movementInterval = setInterval(() => {
+            position += moveSpeed;
+            
+            // Update character position
+            character.style.left = `${characterPosition.x + position}px`;
+            
+            // Check if character reached the end of the stick
+            if (position >= stickLength) {
+                clearInterval(movementInterval);
+                
+                if (willLand) {
+                    // Play jump sound
+                    audioManager.playSound(jumpSound);
+                    
+                    // Landed successfully
+                    handleSuccessfulCrossing();
+                } else {
+                    // Character falls
+                    characterFalls();
+                }
+            }
+        }, 10);
+    }
+
+    // Handle successful platform crossing
+    function handleSuccessfulCrossing() {
+        // Increment score
+        score++;
+        scoreDisplay.textContent = `Score: ${score}`;
+        
+        // Check if it's time for a question
+        if (score > 0 && score % 5 === 0) {
+            // Show question after a small delay
+            setTimeout(() => {
+                showQuestion();
+            }, 500);
+        } else {
+            // Continue to next platform
+            setTimeout(() => {
+                resetForNextPlatform();
+            }, 500);
+        }
+    }
+
+    // Reset game elements for the next platform
+    function resetForNextPlatform() {
+        // Reset character position
+        characterPosition = { x: 50, y: 180 };
+        character.style.left = `${characterPosition.x}px`;
+        character.style.bottom = `${characterPosition.y}px`;
+        
+        // Reset stick
+        stickLength = 0;
+        stick.style.height = '0px';
+        stick.style.transform = 'rotate(0deg)';
+        
+        // Reset state flags
+        stickExtending = false;
+        stickRotating = false;
+        characterMoving = false;
+        
+        // Setup next platforms with increased difficulty
+        setupPlatforms();
+    }
+
+    // Character falls animation
+    function characterFalls() {
+        // Play fall sound
+        audioManager.playSound(fallSound);
+        
+        let fallPosition = characterPosition.y;
+        const fallInterval = setInterval(() => {
+            fallPosition -= 5;
+            character.style.bottom = `${fallPosition}px`;
+            
+            if (fallPosition <= -60) {
+                clearInterval(fallInterval);
+                
+                // Game over
+                gameOverStatus = 'Whoops! You fell!';
+                endGame();
+            }
+        }, 20);
+    }
+
+    // Show question screen with a Filipino language question
+    function showQuestion() {
+        // Pause the game and show question screen
+        gameScreen.classList.add('hidden');
+        questionScreen.classList.remove('hidden');
+        
+        // Get a random question
+        currentQuestion = questionManager.getRandomQuestion();
+        questionAnswered = false;
+        
+        // Display question
+        questionText.textContent = currentQuestion.question;
+        
+        // Clear previous options
+        optionsContainer.innerHTML = '';
+        
+        // Add option buttons
+        currentQuestion.options.forEach((option, index) => {
+            const optionElement = document.createElement('div');
+            optionElement.classList.add('option');
+            optionElement.textContent = option;
+            optionElement.dataset.index = index;
+            
+            optionElement.addEventListener('click', () => {
+                handleAnswerSelection(index);
+            });
+            
+            optionsContainer.appendChild(optionElement);
+        });
+        
+        // Start question timer
+        startQuestionTimer();
+    }
+
+    // Start the timer for answering questions
+    function startQuestionTimer() {
+        let timeLeft = questionTimerDuration;
+        
+        // Reset timer bar
+        timerBar.style.width = '100%';
+        timerBar.style.transition = `width ${questionTimerDuration}s linear`;
+        
+        // Start transition to show time passing
+        setTimeout(() => {
+            timerBar.style.width = '0%';
+        }, 50);
+        
+        // Set timeout for question time limit
+        questionTimer = setTimeout(() => {
+            if (!questionAnswered) {
+                // Time's up - wrong answer
+                gameOverStatus = 'Time\'s up! You did not answer in time.';
+                handleWrongAnswer();
+            }
+        }, questionTimerDuration * 1000);
+    }
+
+    // Handle answer selection
+    function handleAnswerSelection(selectedIndex) {
+        if (questionAnswered) return;
+        
+        questionAnswered = true;
+        clearTimeout(questionTimer);
+        
+        const options = document.querySelectorAll('.option');
+        
+        // Highlight selected answer
+        options[selectedIndex].classList.add('selected');
+        
+        // Check if answer is correct
+        if (selectedIndex === currentQuestion.correctAnswer) {
+            // Correct answer
+            setTimeout(() => {
+                options[selectedIndex].classList.add('correct');
+                audioManager.playSound(correctSound);
+                
+                setTimeout(() => {
+                    // Continue game
+                    questionScreen.classList.add('hidden');
+                    gameScreen.classList.remove('hidden');
+                    resetForNextPlatform();
+                }, 1500);
+            }, 500);
+        } else {
+            // Wrong answer
+            setTimeout(() => {
+                options[selectedIndex].classList.add('incorrect');
+                options[currentQuestion.correctAnswer].classList.add('correct');
+                
+                gameOverStatus = 'Wrong answer! The correct answer was: ' + 
+                                currentQuestion.options[currentQuestion.correctAnswer];
+                
+                handleWrongAnswer();
+            }, 500);
+        }
+    }
+
+    // Handle wrong answer
+    function handleWrongAnswer() {
+        audioManager.playSound(wrongSound);
+        
+        setTimeout(() => {
+            endGame();
+        }, 2000);
+    }
+
+    // End the game
+    function endGame() {
+        gameActive = false;
+        
+        // Stop background music
+        backgroundMusic.pause();
+        backgroundMusic.currentTime = 0;
+        
+        // Check for high score
+        let newRecord = false;
+        if (score > highScore) {
+            highScore = score;
+            localStorage.setItem('highScore', highScore);
+            highscoreDisplay.textContent = `High Score: ${highScore}`;
+            newRecord = true;
+        }
+        
+        // Show game over screen
+        gameScreen.classList.add('hidden');
+        questionScreen.classList.add('hidden');
+        gameOverScreen.classList.remove('hidden');
+        
+        // Update game over screen
+        finalScore.textContent = `Your score: ${score}`;
+        gameOverReason.textContent = gameOverStatus;
+        
+        // Show new high score notification if applicable
+        if (newRecord) {
+            newHighscoreDisplay.classList.remove('hidden');
+        } else {
+            newHighscoreDisplay.classList.add('hidden');
+        }
+    }
+
+    // Restart button event listener
+    restartBtn.addEventListener('click', () => {
+        gameOverScreen.classList.add('hidden');
+        gameScreen.classList.remove('hidden');
+        startGame();
+    });
+
+    // Handle mouse/touch interactions for stick extension (for testing without microphone)
+    gameScreen.addEventListener('mousedown', () => {
+        if (gameActive && !stickExtending && !stickRotating && !characterMoving) {
+            stickExtending = true;
+        }
+    });
+    
+    gameScreen.addEventListener('mouseup', () => {
+        if (gameActive && stickExtending && !stickRotating && !characterMoving) {
+            stickExtending = false;
+            stickRotating = true;
+            rotateStick();
+        }
+    });
+    
+    // Add touch support for mobile devices
+    gameScreen.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        if (gameActive && !stickExtending && !stickRotating && !characterMoving) {
+            stickExtending = true;
+        }
+    });
+    
+    gameScreen.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        if (gameActive && stickExtending && !stickRotating && !characterMoving) {
+            stickExtending = false;
+            stickRotating = true;
+            rotateStick();
+        }
+    });
+});
+
+    </script>
+    <script>
+        // Filipino language questions for the game
+class QuestionManager {
+    constructor() {
+        this.questions = [
+            {
+                question: "Ano ang wikang opisyal ng Pilipinas?",
+                options: ["Filipino", "Tagalog", "Ingles", "Filipino at Ingles"],
+                correctAnswer: 3,
+                explanation: "Ayon sa Konstitusyon, ang Filipino at Ingles ang mga wikang opisyal ng Pilipinas."
+            },
+            {
+                question: "Alin sa mga sumusunod ang wikang panturo sa paaralang elementarya?",
+                options: ["Filipino lamang", "Ingles lamang", "Filipino at Ingles", "Rehiyonal na wika"],
+                correctAnswer: 2,
+                explanation: "Ang Filipino at Ingles ay mga wikang panturo sa paaralang elementarya."
+            },
+            {
+                question: "Kailan idineklara ang Filipino bilang wikang pambansa?",
+                options: ["1937", "1973", "1987", "1946"],
+                correctAnswer: 1,
+                explanation: "Noong 1973, idineklara ng Konstitusyong 1973 ang Filipino bilang wikang pambansa."
+            },
+            {
+                question: "Ano ang batayang wika ng Filipino?",
+                options: ["Bisaya", "Ilokano", "Tagalog", "Cebuano"],
+                correctAnswer: 2,
+                explanation: "Ang Tagalog ang batayang wika ng Filipino."
+            },
+            {
+                question: "Ilang rehiyunal na wika ang kinikilala sa Pilipinas?",
+                options: ["8", "87", "120", "175"],
+                correctAnswer: 3,
+                explanation: "May humigit-kumulang 175 rehiyunal na wika ang kinikilala sa Pilipinas."
+            },
+            {
+                question: "Sino ang nagtatag ng 'Surian ng Wikang Pambansa'?",
+                options: ["Jose Rizal", "Manuel L. Quezon", "Ferdinand Marcos", "Corazon Aquino"],
+                correctAnswer: 1,
+                explanation: "Si Pangulong Manuel L. Quezon ang nagtatag ng Surian ng Wikang Pambansa noong 1936."
+            },
+            {
+                question: "Alin sa mga sumusunod ang HINDI bahagi ng Mother Tongue-Based Multilingual Education (MTB-MLE)?",
+                options: ["Pagtuturo sa katutubong wika", "Paggamit ng wikang nakasanayan", "Pagbabawal ng wikang rehiyunal", "Pag-aaral ng Filipino at Ingles"],
+                correctAnswer: 2,
+                explanation: "Hindi kailanman ipinagbabawal ang wikang rehiyunal sa MTB-MLE."
+            },
+            {
+                question: "Kailan ipinagdiriwang ang 'Buwan ng Wika'?",
+                options: ["Enero", "Hunyo", "Agosto", "Disyembre"],
+                correctAnswer: 2,
+                explanation: "Ipinagdiriwang ang Buwan ng Wika sa buwan ng Agosto."
+            },
+            {
+                question: "Ano ang itinuturing na 'Ama ng Wikang Pambansa'?",
+                options: ["Jose Rizal", "Lope K. Santos", "Manuel L. Quezon", "Andres Bonifacio"],
+                correctAnswer: 1,
+                explanation: "Si Lope K. Santos ay kinikilala bilang 'Ama ng Wikang Pambansa'."
+            },
+            {
+                question: "Anong taon unang naging opisyal na asignatura ang Filipino sa kurikulum ng paaralan?",
+                options: ["1935", "1940", "1957", "1974"],
+                correctAnswer: 2,
+                explanation: "Noong 1957 unang naging opisyal na asignatura ang Filipino sa kurikulum ng paaralan."
+            },
+            {
+                question: "Alin sa mga sumusunod na wika ang may pinakamaraming tagapagsalita sa Pilipinas?",
+                options: ["Cebuano", "Filipino/Tagalog", "Ilokano", "Hiligaynon"],
+                correctAnswer: 1,
+                explanation: "Ang Filipino/Tagalog ang may pinakamaraming tagapagsalita sa Pilipinas."
+            },
+            {
+                question: "Ano ang tawag sa proseso ng pagsasama-sama ng mga salita mula sa ibang wika sa Filipino?",
+                options: ["Asimilasyon", "Globalisasyon", "Kulturasyon", "Nasyonalisasyon"],
+                correctAnswer: 0,
+                explanation: "Ang asimilasyon ang tawag sa proseso ng pagsasama-sama ng mga salita mula sa ibang wika."
+            },
+            {
+                question: "Alin sa mga sumusunod ang ahensiyang namamahala sa pag-unlad ng Filipino?",
+                options: ["CHED", "DepEd", "Komisyon sa Wikang Filipino", "TESDA"],
+                correctAnswer: 2,
+                explanation: "Ang Komisyon sa Wikang Filipino (KWF) ang ahensiya ng pamahalaan na namamahala sa pag-unlad ng Filipino."
+            },
+            {
+                question: "Aling bayani ang nagtaguyod ng kahalagahan ng pag-aaral ng sariling wika?",
+                options: ["Emilio Aguinaldo", "Jose Rizal", "Andres Bonifacio", "Juan Luna"],
+                correctAnswer: 1,
+                explanation: "Si Jose Rizal ang nagtaguyod ng kahalagahan ng pag-aaral ng sariling wika sa kaniyang mga sulatin."
+            },
+            {
+                question: "Aling wika ang HINDI katutubo sa Pilipinas?",
+                options: ["Ilokano", "Bikolano", "Hiligaynon", "Espanyol"],
+                correctAnswer: 3,
+                explanation: "Ang Espanyol ay isang dayuhang wika na ipinakilala noong panahon ng kolonisasyon."
+            }
+        ];
+    }
+
+    // Get a random question
+    getRandomQuestion() {
+        const randomIndex = Math.floor(Math.random() * this.questions.length);
+        return this.questions[randomIndex];
+    }
+
+    // Get a specific question by index
+    getQuestion(index) {
+        if (index >= 0 && index < this.questions.length) {
+            return this.questions[index];
+        }
+        return this.getRandomQuestion();
+    }
+}
+
+// Create global question manager instance
+const questionManager = new QuestionManager();
+
+    </script>
+</body>
+</html>
